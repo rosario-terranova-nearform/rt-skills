@@ -33,19 +33,19 @@ flowchart TD
   H -.->|gap traces to the plan, not the code| B
 ```
 
-Two escape hatches shown as dotted lines: if **rt-code-review**'s Spec axis or **rt-do-i-understand**'s interrogation finds that the *ticket* was wrong rather than the implementation, don't force a code fix onto a bad plan — go back to **rt-to-tickets** (or **rt-interview** first, if a design decision needs renegotiating).
+Two escape hatches shown as dotted lines: if **rt-code-review**'s Spec axis or **rt-do-i-understand**'s interrogation finds that the _ticket_ was wrong rather than the implementation, don't force a code fix onto a bad plan — go back to **rt-to-tickets** (or **rt-interview** first, if a design decision needs renegotiating).
 
-| Step | Skill                                                        | Purpose                                                                                          |
-| ---- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| —    | —                                                             | **Start:** fuzzy idea/opportunity, or a feature request/bug report                                                                             |
-| 0    | [rt-brainstorm](.agents/skills/rt-brainstorm/SKILL.md)              | Optionally gather competitor/user evidence, generate and discuss candidate directions, converge on one _(skip if a request already exists)_    |
-| 1    | [rt-interview](.agents/skills/rt-interview/SKILL.md)                | Stress-test the plan; resolve design decisions with the user _(skip if scope is already clear)_                                                |
-| 2    | [rt-to-tickets](.agents/skills/rt-to-tickets/SKILL.md)               | Break the plan into tracer-bullet vertical slices with blocking edges                                                                          |
-| 3    | [rt-implement](.agents/skills/rt-implement/SKILL.md)                 | Ship one ticket end-to-end; work the frontier until all tickets are done                                                                       |
-| 4    | [rt-code-review](.agents/skills/rt-code-review/SKILL.md)             | Two-axis review: Standards + Spec                                                                                                               |
-| 5    | [rt-address-findings](.agents/skills/rt-address-findings/SKILL.md)   | Fix review findings or consciously defer with rationale                                                                                        |
-| 6    | [rt-do-i-understand](.agents/skills/rt-do-i-understand/SKILL.md)     | Reverse review — attests the author understands what they're shipping                                                                          |
-| 7    | [rt-pr-description](.agents/skills/rt-pr-description/SKILL.md)       | Write the PR title/body; open or update the PR                                                                                                 |
+| Step | Skill                                                              | Purpose                                                                                                                                     |
+| ---- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| —    | —                                                                  | **Start:** fuzzy idea/opportunity, or a feature request/bug report                                                                          |
+| 0    | [rt-brainstorm](.agents/skills/rt-brainstorm/SKILL.md)             | Optionally gather competitor/user evidence, generate and discuss candidate directions, converge on one _(skip if a request already exists)_ |
+| 1    | [rt-interview](.agents/skills/rt-interview/SKILL.md)               | Stress-test the plan; resolve design decisions with the user _(skip if scope is already clear)_                                             |
+| 2    | [rt-to-tickets](.agents/skills/rt-to-tickets/SKILL.md)             | Break the plan into tracer-bullet vertical slices with blocking edges                                                                       |
+| 3    | [rt-implement](.agents/skills/rt-implement/SKILL.md)               | Ship one ticket end-to-end; work the frontier until all tickets are done                                                                    |
+| 4    | [rt-code-review](.agents/skills/rt-code-review/SKILL.md)           | Two-axis review: Standards + Spec                                                                                                           |
+| 5    | [rt-address-findings](.agents/skills/rt-address-findings/SKILL.md) | Fix review findings or consciously defer with rationale                                                                                     |
+| 6    | [rt-do-i-understand](.agents/skills/rt-do-i-understand/SKILL.md)   | Reverse review — attests the author understands what they're shipping                                                                       |
+| 7    | [rt-pr-description](.agents/skills/rt-pr-description/SKILL.md)     | Write the PR title/body; open or update the PR                                                                                              |
 
 Skills live under `.agents/skills/` (each named with an `rt-` prefix). Tickets land in `.agents/tickets/`.
 
@@ -59,18 +59,6 @@ Skills live under `.agents/skills/` (each named with an `rt-` prefix). Tickets l
 - **Product prioritization** — which feature to build next. **rt-brainstorm** widens and grounds the option set; it never picks a winner. That choice stays with the user.
 - **Production incident response** — on-call judgement under fire
 - **Org/process** — hiring, estimates, stakeholder politics
-
-**Optional additions** if you want to go further:
-
-| Gap                            | Skill to add                | When you need it                                                                        |
-| ------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------- |
-| Bug intake without a plan       | `rt-triage`                  | User reports "it's broken" with no repro — lightweight interview before **rt-to-tickets** |
-| Stack of PRs from one feature   | `split-to-prs`               | Built-in Cursor skill — large changes that shouldn't be one PR                            |
-| Post-merge monitoring           | `rt-verify-deploy`           | You ship to prod and need smoke checks / rollback criteria                                |
-| Recording architectural choices | `rt-adr`                     | An **rt-interview** resolves a genuinely architectural decision worth writing down         |
-| User-facing release notes       | `rt-changelog`               | You want a changelog entry generated from the merged PR description                       |
-| Pre-build risk flagging         | `rt-risk-assessment`         | The feature touches auth/money/PII and you want risks named before implementation starts  |
-| Repo-wide standards doc         | `STANDARDS.md` in repo root  | **rt-code-review** Standards axis works better with documented conventions                |
 
 ## Quick start
 
@@ -92,12 +80,12 @@ Skills live under `.agents/skills/` (each named with an `rt-` prefix). Tickets l
 
 No request exists yet — this is exactly what **rt-brainstorm** is for.
 
-| Step          | What you say                                                                | What happens                                                                                                                                                                                                |
-| ------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Step             | What you say                                                                                                      | What happens                                                                                                                                                                                                                                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `@rt-brainstorm` | "What are competitors doing at checkout, and what do support tickets say — then help me figure out what to build" | Agent gathers evidence first (competitor checkout flows, support-ticket themes, sourced, no conclusions drawn yet), then proposes 3–5 distinct directions grounded in that evidence (e.g. guest checkout, saved-payment friction, rate-limit-driven errors, cart-abandonment email), discusses each one at a time |
-| _(converge)_  | "Let's go with reducing saved-payment friction"                              | Agent writes a short direction brief — problem, evidence, chosen direction, directions set aside, open questions — no acceptance criteria yet                                                              |
-| `@rt-interview`  | _(no extra prompt)_                                                           | Open questions from the brief (which payment methods, how much re-auth to skip) get resolved one at a time                                                                                                 |
-| `@rt-to-tickets` | "Break this into tracer bullets"                                              | Normal flow continues as usual                                                                                                                                                                              |
+| _(converge)_     | "Let's go with reducing saved-payment friction"                                                                   | Agent writes a short direction brief — problem, evidence, chosen direction, directions set aside, open questions — no acceptance criteria yet                                                                                                                                                                     |
+| `@rt-interview`  | _(no extra prompt)_                                                                                               | Open questions from the brief (which payment methods, how much re-auth to skip) get resolved one at a time                                                                                                                                                                                                        |
+| `@rt-to-tickets` | "Break this into tracer bullets"                                                                                  | Normal flow continues as usual                                                                                                                                                                                                                                                                                    |
 
 ---
 
@@ -107,9 +95,9 @@ No request exists yet — this is exactly what **rt-brainstorm** is for.
 
 Design is open — you don't yet know the limit, window, or response shape. Run the full planning path.
 
-| Step                | What you say                           | What happens                                                                                                                                                                              |
-| ------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Start               | Paste the request into chat            | Work enters the flow                                                                                                                                                                      |
+| Step                   | What you say                           | What happens                                                                                                                                                                              |
+| ---------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Start                  | Paste the request into chat            | Work enters the flow                                                                                                                                                                      |
 | `@rt-interview`        | _(no extra prompt — the skill drives)_ | Agent asks one design question at a time: limit per IP or per user? fixed window or sliding? return `Retry-After`? You answer; repeats until you confirm shared understanding             |
 | `@rt-to-tickets`       | "Break this into tracer bullets"       | Agent explores the codebase, drafts vertical slices (e.g. middleware → 429 response → client header parsing), shows blocking edges, iterates until you approve, writes `.agents/tickets/` |
 | `@rt-implement`        | "Work the frontier ticket"             | Agent picks the unblocked ticket, implements schema/API/tests for that slice, runs targeted then full tests, checks off acceptance criteria, repeats until all tickets are done           |
@@ -147,9 +135,9 @@ You:   Yes, we're aligned.
 
 Scope is clear — repro, expected behaviour, and affected area are known. Skip rt-interview (and skip rt-brainstorm entirely — this was never fuzzy).
 
-| Step                | What you say                               | What happens                                                                                                                                    |
-| ------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Start               | Paste the bug report (include repro steps) | Work enters the flow                                                                                                                            |
+| Step                   | What you say                               | What happens                                                                                                                                    |
+| ---------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Start                  | Paste the bug report (include repro steps) | Work enters the flow                                                                                                                            |
 | `@rt-interview`        | —                                          | **Skipped** — no open design decisions                                                                                                          |
 | `@rt-to-tickets`       | "One ticket for this bug"                  | Agent writes a single ticket, e.g. `.agents/tickets/fix-expired-session-confirm.md`, with acceptance criteria tied to the repro                 |
 | `@rt-implement`        | "Implement fix-expired-session-confirm"    | Agent finds the null session path in confirm, guards it, returns the existing expired-session UX, adds/updates a test for the repro             |
