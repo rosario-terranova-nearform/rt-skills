@@ -4,9 +4,10 @@ Agent skills that run a full feature/bugfix cycle — from a fuzzy idea or an in
 
 ## Flow
 
-Work can enter two ways: as a **fuzzy idea or opportunity** with no request yet, or as an already-formed **feature request** or **bug report**.
+Work can enter three ways: as a **fuzzy idea or opportunity** with no request yet, as an already-formed **feature request** or **bug report**, or as the **codebase itself** when no one has asked for anything yet but the architecture is causing friction.
 
 - If it's fuzzy, use **rt-brainstorm** — it optionally grounds the problem in competitor/user/market evidence, then generates and discusses candidate directions until one is chosen.
+- If the trigger is architectural friction rather than a business need, use **rt-improve-codebase-architecture** — it scans the codebase for deepening opportunities, presents them as a visual HTML report, then grills through whichever candidate you pick. That grilling loop does the same job **rt-interview** does for a request, so this path feeds straight into **rt-to-tickets** once it's done.
 - Once a request exists, use **rt-interview** when design decisions are still open; otherwise go straight to **rt-to-tickets**.
 
 ```mermaid
@@ -14,6 +15,8 @@ flowchart TD
   O([Fuzzy idea or opportunity]) --> BS[Brainstorm]
   BS --> S([Feature request or bug report])
   F([Feature request or bug report]) --> S
+  CA([Codebase itself]) --> ICA[Improve Codebase<br/>Architecture]
+  ICA --> B
   S --> Q{Design decisions<br/>still open?}
   Q -->|yes| A[Interview]
   Q -->|no| B[To Tickets]
@@ -41,13 +44,15 @@ Two escape hatches shown as dotted lines: if **rt-code-review**'s Spec axis or *
 | 0    | [rt-brainstorm](.agents/skills/rt-brainstorm/SKILL.md)             | Optionally gather competitor/user evidence, generate and discuss candidate directions, converge on one _(skip if a request already exists)_ |
 | 1    | [rt-interview](.agents/skills/rt-interview/SKILL.md)               | Stress-test the plan; resolve design decisions with the user _(skip if scope is already clear)_                                             |
 | 2    | [rt-to-tickets](.agents/skills/rt-to-tickets/SKILL.md)             | Break the plan into tracer-bullet vertical slices with blocking edges                                                                       |
+| —    | —                                                                  | **Start (alt.):** no request yet, but the codebase itself is the trigger                                                                     |
+| 0'   | [rt-improve-codebase-architecture](.agents/skills/rt-improve-codebase-architecture/SKILL.md) | Scan for deepening opportunities, present candidates as an HTML report, grill through the chosen one — replaces both rt-brainstorm and rt-interview for this path, then hands off to step 2 |
 | 3    | [rt-implement](.agents/skills/rt-implement/SKILL.md)               | Ship one ticket end-to-end; work the frontier until all tickets are done                                                                    |
 | 4    | [rt-code-review](.agents/skills/rt-code-review/SKILL.md)           | Two-axis review: Standards + Spec                                                                                                           |
 | 5    | [rt-address-findings](.agents/skills/rt-address-findings/SKILL.md) | Fix review findings or consciously defer with rationale                                                                                     |
 | 6    | [rt-do-i-understand](.agents/skills/rt-do-i-understand/SKILL.md)   | Reverse review — attests the author understands what they're shipping                                                                       |
 | 7    | [rt-pr-description](.agents/skills/rt-pr-description/SKILL.md)     | Write the PR title/body; open or update the PR                                                                                              |
 
-Skills live under `.agents/skills/` (each named with an `rt-` prefix). Tickets land in `.agents/tickets/`.
+Skills live under `.agents/skills/` (each named with an `rt-` prefix). Every skill sets `disable-model-invocation: true` — none of them fire on their own; call the one you want by name (e.g. `@rt-brainstorm`). Tickets land in `.agents/tickets/`.
 
 ## What this replaces vs what it doesn't
 
@@ -178,6 +183,22 @@ Work fix-expired-session-confirm
 
 @rt-pr-description since main
 ```
+
+---
+
+### Example: surface an architecture problem no one asked about
+
+**Starting point:** nothing was requested — you just want to know where the checkout module is fighting you.
+
+No fuzzy idea, no request. This is the codebase-as-trigger path, and it only runs when called explicitly.
+
+| Step                                      | What you say                              | What happens                                                                                                                                                                                                        |
+| ------------------------------------------ | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@rt-improve-codebase-architecture`        | "Look at the checkout module"             | Agent reads `CONTEXT.md` and any ADRs, explores the code for shallow modules and leaky seams, writes a self-contained HTML report to the OS temp dir with before/after diagrams per candidate, and opens it       |
+| _(you pick one)_                           | "Let's do the pricing-client one"          | Agent runs the grilling loop — constraints, dependencies, shape of the deepened module, what sits behind the seam — same one-thing-at-a-time discipline as rt-interview, but scoped to architecture              |
+| _(inline side effects)_                    | —                                          | If the deepened module gets a name not yet in `CONTEXT.md`, the agent adds it there; if you reject a candidate for a load-bearing reason, it offers to record an ADR so the next review doesn't re-suggest it     |
+| `@rt-to-tickets`                           | "Break the pricing-client deepening into tickets" | Design decisions are already locked from the grilling loop, so this goes straight to tracer-bullet tickets — rt-interview is skipped, same as when a request arrives already concrete                            |
+| `@rt-implement` → `@rt-code-review` → ...  | —                                          | Normal flow continues as usual                                                                                                                                                                                     |
 
 # Other skills
 

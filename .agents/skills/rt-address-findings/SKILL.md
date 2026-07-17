@@ -4,6 +4,7 @@ description: >-
   Work through code-review findings until the Standards and Spec axes are clean
   or consciously deferred. Use after rt-code-review, before rt-do-i-understand or
   opening a PR, when the user asks to fix review comments or review feedback.
+disable-model-invocation: true
 ---
 
 # Address Findings

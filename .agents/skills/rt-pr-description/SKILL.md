@@ -4,6 +4,7 @@ description: >-
   Write a pull-request title and body from the branch diff, originating tickets/spec,
   and the author's understanding attestation. Use when opening a PR, updating PR text,
   or when the user asks for a PR description after implementation and review.
+disable-model-invocation: true
 ---
 
 # PR Description

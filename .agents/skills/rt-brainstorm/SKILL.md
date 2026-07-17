@@ -8,6 +8,7 @@ description: >-
   no request yet, or asks what competitors/users are doing as part of
   shaping that. Not for already-scoped features or bugs — go straight to
   rt-interview or rt-to-tickets for those.
+disable-model-invocation: true
 ---
 
 # Brainstorm

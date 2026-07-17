@@ -5,6 +5,7 @@ description: >-
   smallest correct change, verify with targeted then full tests, and mark the
   ticket done. Use when building a feature, fixing a bug, or working the next
   item on the ticket frontier.
+disable-model-invocation: true
 ---
 
 # Implement
